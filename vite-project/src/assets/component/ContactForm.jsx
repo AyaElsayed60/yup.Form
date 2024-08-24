@@ -1,8 +1,9 @@
-import React from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import './ContactForm.css';
 
+// Validation schema using Yup
 const validationSchema = Yup.object({
   firstName: Yup.string().required("This field is required"),
   lastName: Yup.string().required("This field is required"),
@@ -23,32 +24,13 @@ const ContactForm = () => {
       consent: false,
     },
     validationSchema,
-    onSubmit: async (values, { resetForm }) => {
-      resetForm();
-
-      try {
-        
-        await saveData(values);
-        console.log('Form data saved');
-      } catch (error) {
-        console.error('Error saving data:', error);
-      }
+    onSubmit: (values, { resetForm }) => {
+      resetForm(); // Clear the form data for a new user
+      setTimeout(() => {
+        alert("Message sent"); // Show alert after the form is cleared
+      },500 ); // Delay the alert slightly to ensure the form is cleared first
     },
   });
-
-  const saveData = async (data) => {
-    try {
-      await fetch('http://localhost:5000/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-    } catch (error) {
-      console.error('Error saving data:', error);
-    }
-  };
 
   return (
     <form className="form-container" onSubmit={formik.handleSubmit}>
@@ -147,7 +129,7 @@ const ContactForm = () => {
       </div>
 
       <div className="form-group">
-        <div className="checkbox-container">
+        <label className="checkbox-label">
           <input
             type="checkbox"
             name="consent"
@@ -155,10 +137,8 @@ const ContactForm = () => {
             onBlur={formik.handleBlur}
             checked={formik.values.consent}
           />
-          <label htmlFor="consent" className="checkbox-label">
-            I consent to being contacted by the team *
-          </label>
-        </div>
+          I consent to being contacted by the team *
+        </label>
         {formik.touched.consent && formik.errors.consent && (
           <div className="error-message">{formik.errors.consent}</div>
         )}
